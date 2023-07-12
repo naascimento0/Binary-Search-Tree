@@ -36,11 +36,11 @@ BinaryTree* binary_tree_construct(CmpFn cmp_fn, KeyDestroyFn key_destroy_fn,
 }
 
 void binary_tree_add(BinaryTree *bt, void *key, void *value){
-	Node *father = NULL;
+	Node *parent = NULL;
 	Node *current = bt->root;
 	while(current != NULL){
 		int cmp = bt->cmp_fn(current->kvp->key, key);
-		father = current;
+		parent = current;
 
 		if(cmp > 0)
 			current = current->left;
@@ -55,17 +55,17 @@ void binary_tree_add(BinaryTree *bt, void *key, void *value){
 		}
 	}
 
-	if(father == NULL){
-		bt->root = father = node_construct(key, value, NULL, NULL);
+	if(parent == NULL){
+		bt->root = parent = node_construct(key, value, NULL, NULL);
 		return;
 	}
 
-	int add_cmp = bt->cmp_fn(father->kvp->key, key);
+	int add_cmp = bt->cmp_fn(parent->kvp->key, key);
 	if(add_cmp > 0)
-		father->left = node_construct(key, value, NULL, NULL);
+		parent->left = node_construct(key, value, NULL, NULL);
 
 	else if(add_cmp < 0)
-		father->right = node_construct(key, value, NULL, NULL);
+		parent->right = node_construct(key, value, NULL, NULL);
 }
 
 Node* _add_recursive(Node *node, CmpFn cmp_fn, void *key, void *value){
@@ -103,20 +103,61 @@ void* binary_tree_get(BinaryTree *bt, void *key){
 	return NULL;
 }
 
+void _transplant_nodes(Node *root, Node *parent, Node *child){
+	if(root == NULL)
+		root = child;
+	else if(parent == root->left)
+		root->left = child;
+	else if(parent == root->right)
+		root->right = child;
+}
+
+void binary_tree_remove(BinaryTree *bt, void *key){
+	Node *parent = NULL;
+	Node *current = bt->root;
+	while(current != NULL && bt->cmp_fn(current->kvp->key, key)){
+		parent = current;
+
+		int cmp = bt->cmp_fn(current->kvp->key, key);
+		if(cmp > 0)
+			current = current->left;
+		else if(cmp < 0)
+			current = current->right;
+	}
+
+	Node *to_remove = current;
+
+	if(current->left == NULL)
+		_transplant_nodes(parent, current, current->left);
+	else if(current->right == NULL)
+		_transplant_nodes(parent, current, current->right);
+	else{
+		Node *successor = current->right;
+	}
+
+	bt->key_destroy_fn(to_remove->kvp->key);
+	bt->val_destroy_fn(to_remove->kvp->value);
+	node_destroy(to_remove);
+}
+
+KeyValPair* binary_tree_min(BinaryTree *bt){
+
+
+}
 
 
 
 
-void binary_tree_remove(BinaryTree *bt, void *key);
+
 KeyValPair* binary_tree_min(BinaryTree *bt);
 KeyValPair* binary_tree_max(BinaryTree *bt);
 KeyValPair* binary_tree_pop_min(BinaryTree *bt);
 KeyValPair* binary_tree_pop_max(BinaryTree *bt);
 void *binary_tree_get(BinaryTree *bt, void *key);
 
-void binary_tree_destroy(BinaryTree *bt){
-	Node *current = bt->root;
-	while(!binary_tree_empty(bt)){
-		
-	}
-}
+//void binary_tree_destroy(BinaryTree *bt){
+//	Node *current = bt->root;
+//	while(!binary_tree_empty(bt)){
+//
+//	}
+//}
