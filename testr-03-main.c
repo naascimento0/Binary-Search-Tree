@@ -1,8 +1,7 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "binary_tree.h"
+#include "source/binary_tree.h"
 
 typedef struct
 {
@@ -87,7 +86,7 @@ int main()
         }
     }
 
-    binary_tree_destroy(bt);
+    //binary_tree_destroy(bt);
 
     return 0;
 }
