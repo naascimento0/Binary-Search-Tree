@@ -8,6 +8,7 @@ KeyValPair* key_val_pair_construct(void *key, void *val){
     kvp->value = val;
     return kvp;
 }
+
 void key_val_pair_destroy(KeyValPair *kvp){
 	free(kvp);
 }
@@ -103,8 +104,6 @@ void* binary_tree_get(BinaryTree *bt, void *key){
 	return NULL;
 }
 
-
-
 void _transplant_nodes(BinaryTree *bt, Node *parent, Node *current, Node *current_child){
 	if(parent == NULL)
 		bt->root = current_child;
@@ -113,10 +112,9 @@ void _transplant_nodes(BinaryTree *bt, Node *parent, Node *current, Node *curren
 	else if(current == parent->right)
 		parent->right = current_child;
 }
-
 Node* _binary_tree_get_sucessor(Node *node){
 	Node *current = node->right;
-	while(current->left != NULL)
+	while(current != NULL && current->left != NULL)
 		current = current->left;
 
 	return current;
@@ -125,7 +123,7 @@ Node* _binary_tree_get_sucessor(Node *node){
 void binary_tree_remove(BinaryTree *bt, void *key){
 	if(binary_tree_empty(bt))
 		exit(printf("in 'binary_tree_remove': binary tree empty"));
-//teste 1,2,3 e 4 deram ruim
+
 	Node *parent = NULL;
 	Node *current = bt->root;
 	while(current != NULL && bt->cmp_fn(current->kvp->key, key)){
@@ -148,9 +146,14 @@ void binary_tree_remove(BinaryTree *bt, void *key){
 	else{
 		Node *successor = _binary_tree_get_sucessor(current);
 		if(current->right != successor){
-			_transplant_nodes(bt, current, successor, successor->right);
+			Node *temp = current->right;
+			while(temp->left != successor)
+				temp = temp->left;
+
+			_transplant_nodes(bt, temp, successor, successor->right);
 			successor->right = current->right;
 		}
+
 		_transplant_nodes(bt, parent, current, successor);
 		successor->left = current->left;
 	}
@@ -161,21 +164,63 @@ void binary_tree_remove(BinaryTree *bt, void *key){
 }
 
 KeyValPair* binary_tree_min(BinaryTree *bt){
-	return bt->root != NULL ? bt->root->kvp : NULL;
+	Node *current = bt->root;
+	while(current != NULL && current->left != NULL)
+		current = current->left;
+
+	KeyValPair *kvp = key_val_pair_construct(current->kvp->key, current->kvp->value);
+	return kvp;
 }
 
+KeyValPair* binary_tree_max(BinaryTree *bt){
+	Node *current = bt->root;
+	while(current != NULL && current->right != NULL)
+		current = current->right;
 
+	KeyValPair *kvp = key_val_pair_construct(current->kvp->key, current->kvp->value);
+	return kvp;
+}
 
+KeyValPair* binary_tree_pop_min(BinaryTree *bt){
+	if(binary_tree_empty(bt))
+		exit(printf("in 'binary_tree_pop_min': binary tree empty"));
 
+	Node *parent = NULL;
+	Node *current = bt->root;
+	while(current->left != NULL){
+		parent = current;
+		current = current->left;
+	}
 
-KeyValPair* binary_tree_max(BinaryTree *bt);
-KeyValPair* binary_tree_pop_min(BinaryTree *bt);
-KeyValPair* binary_tree_pop_max(BinaryTree *bt);
+	if(parent == NULL)
+		bt->root = current->right;
+	else
+		parent->left = current->right;
+
+	KeyValPair *kvp = current->kvp;
+	free(current);
+	return kvp;
+}
+KeyValPair* binary_tree_pop_max(BinaryTree *bt){
+	if(binary_tree_empty(bt))
+		exit(printf("in 'binary_tree_pop_max': binary tree empty"));
+
+	Node *parent = NULL;
+	Node *current = bt->root;
+	while(current->right != NULL){
+		parent = current;
+		current = current->right;
+	}
+
+	if(parent == NULL)
+		bt->root = current->left;
+	else
+		parent->right = current->left;
+
+	KeyValPair *kvp = current->kvp;
+	free(current);
+	return kvp;
+}
+
 void *binary_tree_get(BinaryTree *bt, void *key);
-
-//void binary_tree_destroy(BinaryTree *bt){
-//	Node *current = bt->root;
-//	while(!binary_tree_empty(bt)){
-//
-//	}
-//}
+void binary_tree_destroy(BinaryTree *bt);
