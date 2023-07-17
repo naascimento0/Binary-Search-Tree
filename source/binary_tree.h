@@ -2,6 +2,8 @@
 #define _BINARY_TREE_H_
 
 #include "vector.h"
+#include "Stack/stack.h"
+#include "Queue/queue.h"
 
 typedef int (*CmpFn)(void *, void *);
 typedef void (*KeyDestroyFn)(void *);

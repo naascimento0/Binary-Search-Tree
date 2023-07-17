@@ -222,5 +222,98 @@ KeyValPair* binary_tree_pop_max(BinaryTree *bt){
 	return kvp;
 }
 
-void *binary_tree_get(BinaryTree *bt, void *key);
 void binary_tree_destroy(BinaryTree *bt);
+
+Vector* binary_tree_inorder_traversal(BinaryTree *bt){
+	Vector *v = vector_construct();
+	Stack *s = stack_construct();
+
+	Node *current = bt->root;
+	do{
+		while(current != NULL){
+			stack_push(s, current);
+			current = current->left;
+		}
+
+		if(!stack_empty(s)){
+			current = stack_pop(s);
+			vector_push_back(v, current->kvp);
+			current = current->right;
+		}
+
+	}while(!stack_empty(s) || current != NULL);
+
+	stack_destroy(s);
+	return v;
+}
+
+Vector* binary_tree_preorder_traversal(BinaryTree *bt){
+	Vector *v = vector_construct();
+	Stack *s = stack_construct();
+
+	Node *current = bt->root;
+	do{
+		while(current != NULL){
+			stack_push(s, current);
+			vector_push_back(v, current->kvp);
+			current = current->left;
+		}
+
+		if(!stack_empty(s)){
+			current = stack_pop(s);
+			current = current->right;
+		}
+
+	}while(!stack_empty(s) || current != NULL);
+
+	stack_destroy(s);
+	return v;
+}
+
+Vector* binary_tree_postorder_traversal(BinaryTree *bt){
+	Vector *v = vector_construct();
+	Stack *s = stack_construct();
+
+	Node *current = bt->root;
+	Node *last_visited = NULL;
+	do{
+
+		if(current != NULL){
+			stack_push(s, current);
+			current = current->left;
+		}else{
+			Node *top = stack_top(s);
+
+			if(top->right != NULL && top->right != last_visited)
+				current = top->right;
+			else{
+				vector_push_back(v, top->kvp);
+				last_visited = top;
+				stack_pop(s);
+			}
+		}
+
+	}while(!stack_empty(s) || current != NULL);
+
+	stack_destroy(s);
+	return v;
+}
+
+Vector* binary_tree_levelorder_traversal(BinaryTree *bt){
+	Vector *v = vector_construct();
+	Queue *q = queue_construct();
+	queue_enqueue(q, bt->root);
+
+	do{
+		Node *current = queue_dequeue(q);
+		if(current != NULL){
+			vector_push_back(v, current->kvp);
+			queue_enqueue(q, current->left);
+			queue_enqueue(q, current->right);
+		}
+
+	}while(!queue_empty(q));
+
+	queue_destroy(q);
+	return v;
+}
