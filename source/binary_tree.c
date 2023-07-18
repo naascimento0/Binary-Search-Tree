@@ -220,19 +220,19 @@ KeyValPair* binary_tree_pop_max(BinaryTree *bt){
 	return kvp;
 }
 
-void _destroy_recursive(Node *root){
+void _destroy_recursive(Node *root, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
 	if(root == NULL)
         return;
     else{
-        _destroy_recursive(root->left);
-        _destroy_recursive(root->right);
-        free(root);
+        _destroy_recursive(root->left, key_destroy_fn, val_destroy_fn);
+        _destroy_recursive(root->right, key_destroy_fn, val_destroy_fn);
+        node_destroy(root, key_destroy_fn, val_destroy_fn);
     }
 }
 
 void binary_tree_destroy(BinaryTree *bt){
 	 if(bt != NULL){
-		 _destroy_recursive(bt->root);
+		 _destroy_recursive(bt->root, bt->key_destroy_fn, bt->val_destroy_fn);
 		 free(bt);
 	 }
 }

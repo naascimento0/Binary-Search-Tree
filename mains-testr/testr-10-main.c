@@ -68,7 +68,6 @@ int main()
         KeyValPair *pair = vector_get(v, i);
         Person *p = pair->value;
         printf("%s %d %.2f\n", p->name, p->idade, p->altura);
-        key_val_pair_destroy(pair, bt->key_destroy_fn, bt->val_destroy_fn);
     }
 
     binary_tree_destroy(bt);
