@@ -5,7 +5,8 @@ run:
 	diff in/output in/expected
 
 valgrind:
-	valgrind ./exec <in/input
+	valgrind ./exec <in/input >in/output
+	diff in/output in/expected
 
 clean:
 	rm -r exec

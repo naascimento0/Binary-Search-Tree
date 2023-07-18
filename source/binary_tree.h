@@ -28,13 +28,12 @@ typedef struct{
 } BinaryTree;
 
 KeyValPair* key_val_pair_construct(void *key, void *val);
-void key_val_pair_destroy(KeyValPair *kvp);
+void key_val_pair_destroy(KeyValPair *kvp, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
 
 Node* node_construct(void *key, void *value, Node *left, Node *right);
-void node_destroy(Node *node);
+void node_destroy(Node *node, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
 
-BinaryTree* binary_tree_construct(CmpFn cmp_fn, KeyDestroyFn key_destroy_fn,
-    ValDestroyFn val_destroy_fn);
+BinaryTree* binary_tree_construct(CmpFn cmp_fn, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn);
 void binary_tree_add(BinaryTree *bt, void *key, void *value);
 int binary_tree_empty(BinaryTree *bt);
 void binary_tree_remove(BinaryTree *bt, void *key);

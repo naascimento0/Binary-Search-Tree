@@ -9,7 +9,9 @@ KeyValPair* key_val_pair_construct(void *key, void *val){
     return kvp;
 }
 
-void key_val_pair_destroy(KeyValPair *kvp){
+void key_val_pair_destroy(KeyValPair *kvp, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
+	key_destroy_fn(kvp->key);
+	val_destroy_fn(kvp->value);
 	free(kvp);
 }
 
@@ -20,14 +22,12 @@ Node* node_construct(void *key, void *value, Node *left, Node *right){
 	node->right = right;
 	return node;
 }
-void node_destroy(Node *node){
-	key_val_pair_destroy(node->kvp);
+void node_destroy(Node *node, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
+	key_val_pair_destroy(node->kvp, key_destroy_fn, val_destroy_fn);
 	free(node);
 }
 
-BinaryTree* binary_tree_construct(CmpFn cmp_fn, KeyDestroyFn key_destroy_fn,
-    ValDestroyFn val_destroy_fn){
-
+BinaryTree* binary_tree_construct(CmpFn cmp_fn, KeyDestroyFn key_destroy_fn, ValDestroyFn val_destroy_fn){
 	BinaryTree *bt = malloc(sizeof(BinaryTree));
 	bt->root = NULL;
 	bt->cmp_fn = cmp_fn;
@@ -158,9 +158,7 @@ void binary_tree_remove(BinaryTree *bt, void *key){
 		successor->left = current->left;
 	}
 
-	bt->key_destroy_fn(current->kvp->key);
-	bt->val_destroy_fn(current->kvp->value);
-	node_destroy(current);
+	node_destroy(current, bt->key_destroy_fn, bt->val_destroy_fn);
 }
 
 KeyValPair* binary_tree_min(BinaryTree *bt){
@@ -222,27 +220,22 @@ KeyValPair* binary_tree_pop_max(BinaryTree *bt){
 	return kvp;
 }
 
-// void binary_tree_destroy(BinaryTree *bt){
-// 	Queue *q = queue_construct();
-// 	queue_enqueue(q, bt->root);
+void _destroy_recursive(Node *root){
+	if(root == NULL)
+        return;
+    else{
+        _destroy_recursive(root->left);
+        _destroy_recursive(root->right);
+        free(root);
+    }
+}
 
-// 	do{
-// 		Node *current = queue_dequeue(q);
-// 		bt->key_destroy_fn(current->kvp->key);
-// 		bt->val_destroy_fn(current->kvp->value);
-// 		key_val_pair_destroy(current->kvp);
-// 		node_destroy(current);
-		
-// 		if(current != NULL){
-// 			queue_enqueue(q, current->left);
-// 			queue_enqueue(q, current->right);
-// 		}
-
-// 	}while(!queue_empty(q));
-
-// 	queue_destroy(q);
-// 	free(bt);
-// }
+void binary_tree_destroy(BinaryTree *bt){
+	 if(bt != NULL){
+		 _destroy_recursive(bt->root);
+		 free(bt);
+	 }
+}
 
 Vector* binary_tree_inorder_traversal(BinaryTree *bt){
 	Vector *v = vector_construct();
