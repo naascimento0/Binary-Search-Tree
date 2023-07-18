@@ -86,7 +86,7 @@ int main()
         }
     }
 
-    //binary_tree_destroy(bt);
+    binary_tree_destroy(bt);
 
     return 0;
 }

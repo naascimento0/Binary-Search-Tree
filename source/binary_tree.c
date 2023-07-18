@@ -52,6 +52,7 @@ void binary_tree_add(BinaryTree *bt, void *key, void *value){
 		else{
 			bt->val_destroy_fn(current->kvp->value);
 			current->kvp->value = value;
+			bt->key_destroy_fn(key);
 			return;
 		}
 	}
@@ -166,8 +167,7 @@ KeyValPair* binary_tree_min(BinaryTree *bt){
 	while(current != NULL && current->left != NULL)
 		current = current->left;
 
-	KeyValPair *kvp = key_val_pair_construct(current->kvp->key, current->kvp->value);
-	return kvp;
+	return current->kvp;
 }
 
 KeyValPair* binary_tree_max(BinaryTree *bt){
@@ -175,8 +175,7 @@ KeyValPair* binary_tree_max(BinaryTree *bt){
 	while(current != NULL && current->right != NULL)
 		current = current->right;
 
-	KeyValPair *kvp = key_val_pair_construct(current->kvp->key, current->kvp->value);
-	return kvp;
+	return current->kvp;
 }
 
 KeyValPair* binary_tree_pop_min(BinaryTree *bt){

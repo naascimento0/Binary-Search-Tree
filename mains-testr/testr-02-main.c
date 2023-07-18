@@ -79,14 +79,14 @@ int main()
             scanf("%d %d %d", &x, &y, &idx);
             binary_tree_add(bt, cell_construct(x, y), new_int(idx));
         }
-//        else
-//        {
-//            scanf("%d %d", &x, &y);
-//            Cell *c = cell_construct(x, y);
-//            int *p = binary_tree_get(bt, c);
-//            printf("%d\n", *p);
-//            cell_destroy(c);
-//        }
+        else
+        {
+            scanf("%d %d", &x, &y);
+            Cell *c = cell_construct(x, y);
+            int *p = binary_tree_get(bt, c);
+            printf("%d\n", *p);
+            cell_destroy(c);
+        }
     }
 
     binary_tree_destroy(bt);

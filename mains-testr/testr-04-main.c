@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,11 +75,10 @@ int main()
 
             Person *p = pair->value;
             printf("%s %d %.2f\n", p->name, p->idade, p->altura);
-            key_val_pair_destroy(pair);
         }
     }
 
-    //binary_tree_destroy(bt);
+    binary_tree_destroy(bt);
 
     return 0;
 }

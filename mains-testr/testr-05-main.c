@@ -78,17 +78,14 @@ int main()
 
                 Person *p = pair->value;
                 printf("%s %d %.2f\n", p->name, p->idade, p->altura);
-
-                key_destroy_fn(pair->key);
-                val_destroy_fn(pair->value);
-                key_val_pair_destroy(pair);
+                key_val_pair_destroy(pair, bt->key_destroy_fn, bt->val_destroy_fn);
             }
             else
                 printf("ARVORE VAZIA\n");
         }
     }
 
-    //binary_tree_destroy(bt);
+    binary_tree_destroy(bt);
 
     return 0;
 }
