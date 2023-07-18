@@ -11,6 +11,7 @@ typedef struct Element
 } Element;
 
 Element *element_construct(data_type value, Element *prev, Element *next);
+
 void element_destroy(Element *n);
 
 #endif

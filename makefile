@@ -3,5 +3,9 @@ all:
 run:
 	./exec <in/input >in/output
 	diff in/output in/expected
+
+valgrind:
+	valgrind ./exec <in/input
+
 clean:
 	rm -r exec

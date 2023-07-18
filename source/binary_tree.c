@@ -222,7 +222,27 @@ KeyValPair* binary_tree_pop_max(BinaryTree *bt){
 	return kvp;
 }
 
-void binary_tree_destroy(BinaryTree *bt);
+// void binary_tree_destroy(BinaryTree *bt){
+// 	Queue *q = queue_construct();
+// 	queue_enqueue(q, bt->root);
+
+// 	do{
+// 		Node *current = queue_dequeue(q);
+// 		bt->key_destroy_fn(current->kvp->key);
+// 		bt->val_destroy_fn(current->kvp->value);
+// 		key_val_pair_destroy(current->kvp);
+// 		node_destroy(current);
+		
+// 		if(current != NULL){
+// 			queue_enqueue(q, current->left);
+// 			queue_enqueue(q, current->right);
+// 		}
+
+// 	}while(!queue_empty(q));
+
+// 	queue_destroy(q);
+// 	free(bt);
+// }
 
 Vector* binary_tree_inorder_traversal(BinaryTree *bt){
 	Vector *v = vector_construct();
@@ -316,4 +336,49 @@ Vector* binary_tree_levelorder_traversal(BinaryTree *bt){
 
 	queue_destroy(q);
 	return v;
+}
+
+Vector* _in_order(Vector *v, Node *current){
+	if(current != NULL){
+		v = _in_order(v, current->left);
+		vector_push_back(v, current->kvp);
+		v = _in_order(v, current->right);
+	}
+
+	return v;
+} 
+
+Vector* binary_tree_inorder_traversal_recursive(BinaryTree *bt){
+	Vector *v = vector_construct();
+	return _in_order(v, bt->root);
+}
+
+Vector* _pre_order(Vector *v, Node *current){
+	if(current != NULL){
+		vector_push_back(v, current->kvp);
+		v = _pre_order(v, current->left);
+		v = _pre_order(v, current->right);
+	}
+	
+	return v;
+} 
+
+Vector* binary_tree_preorder_traversal_recursive(BinaryTree *bt){
+	Vector *v = vector_construct();
+	return _pre_order(v, bt->root);
+}
+
+Vector* _post_order(Vector *v, Node *current){
+	if(current != NULL){
+		v = _post_order(v, current->left);
+		v = _post_order(v, current->right);
+		vector_push_back(v, current->kvp);
+	}
+	
+	return v;
+} 
+
+Vector* binary_tree_postorder_traversal_recursive(BinaryTree *bt){
+	Vector *v = vector_construct();
+	return _post_order(v, bt->root);
 }
